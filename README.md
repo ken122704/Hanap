@@ -1,74 +1,83 @@
-<<<<<<< HEAD
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-=======
 # Hanap
->>>>>>> 1ee37bf480cbc9af3ce93f16673b40036d56699f
+
+## 📌 Project Overview
+
+**Hanap** is a simple web-based masterlist and role management system built to organize, store, and manage records for a specific group. The name _Hanap_ comes from the Filipino word for **“look”** or **“search”**, reflecting the app’s goal of making information easy to find and manage.
+
+This project focuses on **core CRUD functionality** (Create, Read, Update, Delete) while keeping the system lightweight and beginner-friendly. It is built as a **learning-by-building project** rather than a tutorial-only exercise.
+
+---
+
+## 🎯 Purpose
+
+The main goals of Hanap are to:
+
+- Maintain a **centralized masterlist** of members
+- Organize members by **roles**
+- Store and manage related files in structured folders
+- Practice real-world full-stack development using modern tools
+
+---
+
+## ✨ Key Features
+
+- **Masterlist Management**
+  - Add, view, update, and delete member records
+- **Role-Based Organization**
+  - Assign and group members by roles
+- **Date Tracking**
+  - Store important dates (e.g., swore date) using Firestore Timestamps
+- **Storage System**
+  - Folder-based structure such as:
+    - Per Head Total
+    - Per Role Total
+- **Simple & Clean UI**
+  - Focused on usability and clarity
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** React
+- **Backend (BaaS):** Firebase
+  - Firestore (Database)
+  - Firebase Storage
+  - Firebase Hosting or Vercel (Deployment)
+
+---
+
+## 🚀 Deployment
+
+Hanap can be deployed using **free tiers**:
+
+- **Frontend:** Firebase Hosting or Vercel
+- **Backend:** Firebase Spark Plan
+
+This allows the project to be live without any server or hosting costs.
+
+---
+
+## 🔮 Future Improvements
+
+- Authentication and access control
+- Search and filter functionality
+- Role-based summaries and totals
+- AI agent integration for automation and reporting
+- UI and UX improvements
+
+---
+
+## 📚 Learning Focus
+
+This project is built to practice:
+
+- CRUD operations
+- Firestore data modeling
+- Handling timestamps and real-world data
+- Building a small but complete system from scratch
+
+---
+
+## 📄 License
+
+This project is for learning and educational purposes.
