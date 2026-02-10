@@ -4,60 +4,63 @@ import UserDataService from '../services/user.service';
 import { useUsers } from '../hooks/useUsers';
 import UserForm from '../components/UserForm';
 import UserCard from '../components/UserCard';
+import StatsCard from '../components/StatsCard';
 
 const Home = () => {
   const { users, fetchUsers } = useUsers();
-
-  // 1. SEARCH STATE
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [newName, setNewName] = useState("");
-  const [newDuty, setNewDuty] = useState("");
-  const [newSworeDate, setNewSworeDate] = useState("");
-
   // --- CREATE USER ---
-  const createUser = async () => {
-    if(!newName || !newDuty) return alert("Please fill in Name and Role");
+  const createUser = async (name, registryNumber, rolesArray) => {
+    // 1. Convert Date strings to Firestore Timestamps
+    const formattedRoles = rolesArray.map(role => ({
+        duty: role.duty,
+        swore_date: role.swore_date ? Timestamp.fromDate(new Date(role.swore_date)) : null
+    }));
 
+    // 2. Build User Object
     const newUser = { 
-      name: newName, 
-      roles: [
-        {
-          duty: newDuty, 
-          swore_date: newSworeDate ? Timestamp.fromDate(new Date(newSworeDate)) : null
-        }
-      ]
+      name: name,
+      registry_number: registryNumber, // <--- SAVING ID
+      roles: formattedRoles
     };
     
     await UserDataService.addUser(newUser);
-    setNewName(""); setNewDuty(""); setNewSworeDate("");
     fetchUsers();
   };
 
-  // --- ADD ROLE (With Duplicate Check) ---
+  // --- ADD ROLE ---
   const handleAddRole = async (userId, duty, date) => {
-    // Find the user first
     const targetUser = users.find(u => u.id === userId);
-    
-    // 2. PREVENT DUPLICATE ROLES
-    // Check if ANY role in their list matches the new duty name
-    if (targetUser && targetUser.roles && targetUser.roles.some(r => r.duty.toLowerCase() === duty.toLowerCase())) {
-        alert(`This user is already a "${duty}"!`);
-        return; 
+    if (targetUser?.roles?.some(r => r.duty === duty)) {
+        return alert(`This user is already a "${duty}"!`);
     }
-
-    const newRole = {
-      duty: duty,
-      swore_date: date ? Timestamp.fromDate(new Date(date)) : null
-    };
-
+    const newRole = { duty: duty, swore_date: date ? Timestamp.fromDate(new Date(date)) : null };
     await UserDataService.addRoleToUser(userId, newRole);
     fetchUsers(); 
   };
 
-  // --- 3. DELETE ROLE ---
+  // --- EDIT USER ---
+  const handleEditUser = async (userId, updatedFields) => {
+    const safeUpdates = { ...updatedFields };
+
+    // Ensure dates in roles are timestamps
+    if (safeUpdates.roles) {
+        safeUpdates.roles = safeUpdates.roles.map(role => ({
+            ...role,
+            swore_date: typeof role.swore_date === 'string' && role.swore_date !== "" 
+                ? Timestamp.fromDate(new Date(role.swore_date)) 
+                : role.swore_date
+        }));
+    }
+
+    await UserDataService.updateUser(userId, safeUpdates);
+    fetchUsers();
+  };
+
+  // --- DELETE LOGIC ---
   const handleDeleteRole = async (userId, roleToDelete) => {
-    if(window.confirm(`Remove role "${roleToDelete.duty}" from this user?`)) {
+    if(window.confirm(`Remove role "${roleToDelete.duty}"?`)) {
       await UserDataService.removeRoleFromUser(userId, roleToDelete);
       fetchUsers();
     }
@@ -70,47 +73,46 @@ const Home = () => {
     }
   };
 
-  // --- FILTER LOGIC ---
-  // We filter the list BEFORE mapping it in the return statement
+  // --- FILTER LOGIC (Updated for Registry Number) ---
   const filteredUsers = users.filter((user) => {
     const lowerSearch = searchTerm.toLowerCase();
-    // Search by Name OR by Role
+    
     const matchesName = user.name.toLowerCase().includes(lowerSearch);
+    
     const matchesRole = user.roles && user.roles.some(r => r.duty.toLowerCase().includes(lowerSearch));
     
-    return matchesName || matchesRole;
+    const matchesReg = user.registry_number && user.registry_number.toLowerCase().includes(lowerSearch);
+    
+    return matchesName || matchesRole || matchesReg;
   });
 
   return (
     <div className="App">
       <h1>Hanap Member Management</h1>
 
-      {/* SEARCH BAR */}
+      <StatsCard users={users} />
+
       <div style={{ marginBottom: '20px', maxWidth: '400px', margin: '0 auto 30px auto' }}>
         <input 
-          placeholder="🔍 Search by Name or Role..." 
+          placeholder="🔍 Search Name, Role, or Registry No..." 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ccc' }}
         />
       </div>
       
-      <UserForm 
-        newName={newName} setNewName={setNewName}
-        newDuty={newDuty} setNewDuty={setNewDuty}
-        newSworeDate={newSworeDate} setNewSworeDate={setNewSworeDate}
-        onCreate={createUser}
-      />
+      {/* Form passes data to createUser */}
+      <UserForm onCreate={createUser} />
 
       <div className="user-grid">
-        {/* Use filteredUsers instead of users */}
         {filteredUsers.map((user) => (
           <UserCard 
             key={user.id} 
             user={user} 
             onAddRole={handleAddRole}
             onDelete={deleteUser}
-            onDeleteRole={handleDeleteRole} // Pass the new handler
+            onDeleteRole={handleDeleteRole}
+            onEditUser={handleEditUser}
           />
         ))}
         {filteredUsers.length === 0 && (
