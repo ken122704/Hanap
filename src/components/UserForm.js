@@ -44,17 +44,16 @@ const UserForm = ({ onCreate }) => {
 
   // --- SUBMIT ---
   const handleSubmit = () => {
-    if (!name) return alert("Please enter a name.");
-    
+      if (!name) return alert("Please enter a name.");
+      if (pendingRoles.length === 0) return alert("Please add at least one role.");
 
-    if (pendingRoles.length === 0) return alert("Please add at least one role.");
+      // --- UPDATE: PASS "Active" AS DEFAULT STATUS ---
+      onCreate(name, registryNumber, pendingRoles, "Active");
 
-    onCreate(name, registryNumber, pendingRoles);
-
-    setName("");
-    setRegistryNumber("");
-    setPendingRoles([]);
-  };
+      setName("");
+      setRegistryNumber("");
+      setPendingRoles([]);
+    };
 
   return (
     <div className="form-card">

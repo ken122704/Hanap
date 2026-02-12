@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { AVAILABLE_ROLES } from '../roles';
 
-const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
-  // --- EDIT STATE ---
+const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser, onToggleStatus }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(user.name);
-  const [editedRegistry, setEditedRegistry] = useState(user.registry_number || ""); // <--- NEW
+  const [editedRegistry, setEditedRegistry] = useState(user.registry_number || "");
   const [editedRoles, setEditedRoles] = useState([]);
 
-  // --- ADD ROLE STATE ---
   const [isAdding, setIsAdding] = useState(false);
   const [newRoleDuty, setNewRoleDuty] = useState("");
   const [newRoleDate, setNewRoleDate] = useState("");
 
-  // Sync state when props change (in case DB updates from elsewhere)
   useEffect(() => {
     if (user.roles) setEditedRoles(user.roles);
     if (user.registry_number) setEditedRegistry(user.registry_number);
   }, [user.roles, user.registry_number]);
 
-  // --- HELPERS ---
   const formatDate = (timestamp) => {
     if (!timestamp) return "";
     if (timestamp.toDate) return timestamp.toDate().toISOString().split('T')[0];
@@ -32,10 +28,8 @@ const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
     return new Date(timestamp).toLocaleDateString();
   };
 
-  // --- EDIT LOGIC ---
   const toggleEdit = () => {
     setIsEditing(!isEditing);
-    // Reset to current values on open/close
     setEditedName(user.name);
     setEditedRegistry(user.registry_number || "");
     setEditedRoles(user.roles ? [...user.roles] : []);
@@ -55,9 +49,6 @@ const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
   };
 
   const saveAllChanges = () => {
-    // Validation on Save
-    if (editedRegistry.length !== 13) return alert("Registry Number must be 13 chars");
-
     onEditUser(user.id, { 
         name: editedName, 
         registry_number: editedRegistry,
@@ -66,7 +57,6 @@ const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
     setIsEditing(false);
   };
 
-  // --- ADD ROLE LOGIC ---
   const handleSaveNewRole = () => {
     if (!newRoleDuty) return;
     onAddRole(user.id, newRoleDuty, newRoleDate);
@@ -74,10 +64,16 @@ const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
     setNewRoleDuty(""); setNewRoleDate("");
   };
 
+  // --- STATUS LOGIC ---
+  const currentStatus = user.status || "Active";
+  const isActive = currentStatus === "Active";
+
   return (
-    <div className="user-card">
+    <div className="user-card" style={{ 
+        opacity: isActive ? 1 : 0.7, // Dim if inactive
+        transition: 'opacity 0.3s'
+    }}>
       <div className="card-header">
-        {/* --- VIEW VS EDIT MODE: HEADER --- */}
         {isEditing ? (
             <div style={{width: '100%'}}>
                 <input 
@@ -99,7 +95,28 @@ const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
             </div>
         ) : (
             <div style={{width: '100%'}}>
-                <h3>{user.name}</h3>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <h3 style={{marginBottom: '5px'}}>{user.name}</h3>
+                    
+                    {/* --- STATUS TOGGLE BUTTON --- */}
+                    <button 
+                        onClick={() => onToggleStatus(user.id, currentStatus)}
+                        style={{
+                            padding: '4px 10px',
+                            fontSize: '0.75rem',
+                            borderRadius: '20px',
+                            border: isActive ? '1px solid #38BDF8' : '1px solid #ccc',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            backgroundColor: isActive ? '#E0F2FE' : '#f3f4f6', 
+                            color: isActive ? '#0284C7' : '#6b7280',
+                        }}
+                        title="Click to toggle Status"
+                    >
+                        {isActive ? '● Active' : '○ Inactive'}
+                    </button>
+                </div>
+
                 <div style={{
                     fontSize: '0.8rem', color: '#555', background: '#f0f0f0', 
                     display: 'inline-block', padding: '2px 6px', borderRadius: '4px',
@@ -125,10 +142,8 @@ const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
         </div>
       </div>
       
-      {/* --- ROLES LIST --- */}
       <div className="roles-container">
         {isEditing ? (
-            // EDIT MODE ROLES
             <div className="edit-roles-list">
                 {editedRoles.map((role, index) => (
                     <div key={index} className="edit-role-row">
@@ -149,7 +164,6 @@ const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
                 ))}
             </div>
         ) : (
-            // VIEW MODE ROLES
             <>
                 {user.roles && user.roles.map((role, index) => (
                 <div key={index} className="role-chip">
@@ -171,7 +185,6 @@ const UserCard = ({ user, onDelete, onAddRole, onDeleteRole, onEditUser }) => {
         )}
       </div>
 
-      {/* --- ADD ROLE BUTTON (Hidden when editing) --- */}
       {!isEditing && (
           !isAdding ? (
             <button className="btn-secondary" onClick={() => setIsAdding(true)}>+ Add Role</button>

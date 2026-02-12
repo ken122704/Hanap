@@ -11,21 +11,27 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // --- CREATE USER ---
-  const createUser = async (name, registryNumber, rolesArray) => {
-    // 1. Convert Date strings to Firestore Timestamps
+  const createUser = async (name, registryNumber, rolesArray, initialStatus) => {
+    
     const formattedRoles = rolesArray.map(role => ({
         duty: role.duty,
         swore_date: role.swore_date ? Timestamp.fromDate(new Date(role.swore_date)) : null
     }));
 
-    // 2. Build User Object
     const newUser = { 
       name: name,
-      registry_number: registryNumber, // <--- SAVING ID
-      roles: formattedRoles
+      registry_number: registryNumber,
+      roles: formattedRoles,
+      status: initialStatus || "Active" // <--- SAVE STATUS TO DB
     };
     
     await UserDataService.addUser(newUser);
+    fetchUsers();
+  };
+
+  const handleToggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+    await UserDataService.updateUser(id, { status: newStatus });
     fetchUsers();
   };
 
@@ -88,7 +94,7 @@ const Home = () => {
 
   return (
     <div className="App">
-      <h1>Hanap Member Management</h1>
+      <h1>Hanap</h1>
 
       <StatsCard users={users} />
 
@@ -113,6 +119,7 @@ const Home = () => {
             onDelete={deleteUser}
             onDeleteRole={handleDeleteRole}
             onEditUser={handleEditUser}
+            onToggleStatus={handleToggleStatus}
           />
         ))}
         {filteredUsers.length === 0 && (
