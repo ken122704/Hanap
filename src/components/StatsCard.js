@@ -4,16 +4,21 @@ const StatsCard = ({ users }) => {
   // 1. Total Head Count
   const totalMembers = users.length;
 
-  // 2. Total Roles Assigned (If one person has 2 roles, this adds 2)
+  // 2. Active vs Inactive Counts
+  // Note: We treat undefined status as 'Active' for backward compatibility
+  const activeCount = users.filter(u => !u.status || u.status === 'Active').length;
+  const inactiveCount = users.filter(u => u.status === 'Inactive').length;
+
+  // 3. Total Roles Assigned
   const totalRolesAssigned = users.reduce((acc, user) => {
     return acc + (user.roles ? user.roles.length : 0);
   }, 0);
 
-  // 3. Breakdown per Role
+  // 4. Breakdown per Role (Only showing ACTIVE members in the breakdown?)
+  // Let's count ALL roles for now to match the "Total Roles" number.
   const roleBreakdown = users.reduce((acc, user) => {
     if (user.roles) {
       user.roles.forEach(role => {
-        // Normalize role name to uppercase to avoid "admin" vs "Admin" duplicates
         const dutyName = role.duty.toUpperCase(); 
         acc[dutyName] = (acc[dutyName] || 0) + 1;
       });
@@ -23,23 +28,46 @@ const StatsCard = ({ users }) => {
 
   return (
     <div className="stats-container" style={styles.container}>
+      
       {/* Card 1: Total Members */}
       <div style={styles.card}>
         <h4 style={styles.title}>Total Members</h4>
         <h2 style={styles.number}>{totalMembers}</h2>
-        <p style={styles.sub}>Per Head</p>
+        <p style={styles.sub}>Total Registered</p>
       </div>
 
-      {/* Card 2: Total Roles */}
+      {/* Card 2: Status Breakdown (NEW) */}
       <div style={styles.card}>
-        <h4 style={styles.title}>Total Assignments</h4>
-        <h2 style={styles.number}>{totalRolesAssigned}</h2>
-        <p style={styles.sub}>Overall Roles</p>
+        <h4 style={styles.title}>Member Status</h4>
+        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', marginTop: '5px' }}>
+            
+            {/* Active Count */}
+            <div style={{ textAlign: 'center' }}>
+                <h2 style={{ ...styles.number, fontSize: '2rem', color: '#0EA5E9' }}>{activeCount}</h2>
+                <div style={{ fontSize: '0.75rem', color: '#0EA5E9', fontWeight: 'bold', textTransform: 'uppercase' }}>Active</div>
+            </div>
+
+            <div style={{ width: '1px', height: '40px', background: '#E5E7EB' }}></div>
+
+            {/* Inactive Count */}
+            <div style={{ textAlign: 'center' }}>
+                <h2 style={{ ...styles.number, fontSize: '2rem', color: '#9CA3AF' }}>{inactiveCount}</h2>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 'bold', textTransform: 'uppercase' }}>Inactive</div>
+            </div>
+
+        </div>
       </div>
 
-      {/* Card 3: Breakdown */}
-      <div style={{...styles.card, flex: 2}}>
-        <h4 style={styles.title}>Role Breakdown</h4>
+      {/* Card 3: Total Roles */}
+      <div style={styles.card}>
+        <h4 style={styles.title}>Total Positions</h4>
+        <h2 style={styles.number}>{totalRolesAssigned}</h2>
+        <p style={styles.sub}>Assigned Roles</p>
+      </div>
+
+      {/* Card 4: Breakdown */}
+      <div style={{...styles.card, flex: 2, minWidth: '300px'}}>
+        <h4 style={styles.title}>Role Distribution</h4>
         <div style={styles.grid}>
           {Object.entries(roleBreakdown).map(([role, count]) => (
             <div key={role} style={styles.badge}>
@@ -53,7 +81,7 @@ const StatsCard = ({ users }) => {
   );
 };
 
-// Simple internal styles for this component
+// Internal styles
 const styles = {
   container: {
     display: 'flex',
@@ -64,17 +92,18 @@ const styles = {
   card: {
     background: 'white',
     padding: '20px',
-    borderRadius: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+    borderRadius: '16px', // Matches your Sky Blue theme rounded corners
+    boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.1)',
     flex: 1,
-    minWidth: '150px',
-    textAlign: 'center'
+    minWidth: '160px',
+    textAlign: 'center',
+    border: '1px solid #E0F2FE' // Subtle border matching theme
   },
-  title: { margin: '0 0 10px 0', color: '#666', fontSize: '0.9rem', textTransform: 'uppercase' },
-  number: { margin: 0, fontSize: '2.5rem', color: '#4A90E2' },
-  sub: { margin: '5px 0 0 0', color: '#aaa', fontSize: '0.8rem' },
-  grid: { display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' },
-  badge: { background: '#f0f4f8', padding: '5px 10px', borderRadius: '5px', fontSize: '0.85rem' }
+  title: { margin: '0 0 10px 0', color: '#64748B', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 'bold' },
+  number: { margin: 0, fontSize: '2.5rem', color: '#0EA5E9' }, // Uses Primary Sky Blue
+  sub: { margin: '5px 0 0 0', color: '#94A3B8', fontSize: '0.8rem' },
+  grid: { display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' },
+  badge: { background: '#F0F9FF', color: '#0369A1', padding: '6px 10px', borderRadius: '8px', fontSize: '0.85rem', border: '1px solid #BAE6FD' }
 };
 
 export default StatsCard;
