@@ -38,7 +38,7 @@ The main goals of Hanap are to:
 
 ## 🛠 Tech Stack
 
-- **Frontend:** React
+- **Frontend:** JavaScript React
 - **Backend (BaaS):** Firebase
   - Firestore (Database)
   - Firebase Storage
