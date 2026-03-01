@@ -111,7 +111,6 @@ const Home = () => {
             alt="Hanap Logo" 
             style={{ width: '100px', height: '100px', objectFit: 'contain', borderRadius: '8px' }} 
         />
-        <h1 style={{ margin: 0 }}>Hanap Member Management</h1>
         <button onClick={handleLogout} className="btn-cancel" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
           Sign Out
         </button>

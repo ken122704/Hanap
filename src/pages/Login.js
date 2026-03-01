@@ -58,9 +58,9 @@ const Login = () => {
         <img 
           src={hanapLogo} 
           alt="Hanap Logo" 
-          style={{ width: '150px', height: '150px', objectFit: 'contain', marginBottom: '10px', borderRadius: '12px' }} 
+          style={{ width: '200px', height: '200px', objectFit: 'contain', marginBottom: '0px', borderRadius: '12px' }} 
         />
-
+        
         <p style={{ color: '#64748B', marginBottom: '25px', fontSize: '0.9rem' }}>
           {isRegistering ? 'Create a new account' : 'Sign in to your account'}
         </p>
