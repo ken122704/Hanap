@@ -47,4 +47,5 @@ class UserDataService {
   };
 }
 
-export default new UserDataService();
+const userService = new UserDataService();
+export default userService;
