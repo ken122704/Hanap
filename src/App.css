@@ -1,21 +1,21 @@
 :root {
   /* --- THEME: SKY BLUE & CLOUD WHITE --- */
-  --primary: #0EA5E9;       /* Sky Blue (Vibrant) */
-  --primary-hover: #0284C7; /* Deep Sky Blue */
+  --primary: #0EA5E9;       
+  --primary-hover: #0284C7; 
   
-  --secondary: #38BDF8;     /* Light Sky Blue */
+  --secondary: #38BDF8;     
   --secondary-hover: #0EA5E9;
 
-  --danger: #F43F5E;        /* Soft Red/Rose */
+  --danger: #F43F5E;        
   --danger-hover: #E11D48;
   
-  --bg: #F0F9FF;            /* Very Pale Blue Background (Alice Blue) */
-  --card-bg: #FFFFFF;       /* Pure White Cards */
-  --text: #334155;          /* Slate Grey (Softer than black) */
-  --border: #BAE6FD;        /* Pale Blue Borders */
+  --bg: #F0F9FF;            
+  --card-bg: #FFFFFF;       
+  --text: #334155;          
+  --border: #BAE6FD;        
   
-  --chip-bg: #E0F2FE;       /* Lightest blue for roles */
-  --chip-text: #0369A1;     /* Dark blue text for roles */
+  --chip-bg: #E0F2FE;       
+  --chip-text: #0369A1;     
 }
 
 /* --- GLOBAL RESETS --- */
