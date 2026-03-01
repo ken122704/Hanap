@@ -5,13 +5,26 @@ import { useUsers } from '../hooks/useUsers';
 import UserForm from '../components/UserForm';
 import UserCard from '../components/UserCard';
 import StatsCard from '../components/StatsCard';
+import { auth } from '../firebase/firebase-config';
+import { signOut } from 'firebase/auth';
+import hanapLogo from '../assets/logo.png';
 
 const Home = () => {
-  const { users, fetchUsers } = useUsers();
+  const { users } = useUsers();
   const [searchTerm, setSearchTerm] = useState("");
+ 
+  // --- LOGOUT ---
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
 
   // --- CREATE USER ---
   const createUser = async (name, registryNumber, rolesArray, initialStatus) => {
+    if (!auth.currentUser) return alert("You must be logged in to add members!");
     
     const formattedRoles = rolesArray.map(role => ({
         duty: role.duty,
@@ -22,17 +35,16 @@ const Home = () => {
       name: name,
       registry_number: registryNumber,
       roles: formattedRoles,
-      status: initialStatus || "Active" // <--- SAVE STATUS TO DB
+      status: initialStatus || "Active",
+      owner_uid: auth.currentUser.uid
     };
     
     await UserDataService.addUser(newUser);
-    fetchUsers();
   };
 
   const handleToggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
     await UserDataService.updateUser(id, { status: newStatus });
-    fetchUsers();
   };
 
   // --- ADD ROLE ---
@@ -43,7 +55,6 @@ const Home = () => {
     }
     const newRole = { duty: duty, swore_date: date ? Timestamp.fromDate(new Date(date)) : null };
     await UserDataService.addRoleToUser(userId, newRole);
-    fetchUsers(); 
   };
 
   // --- EDIT USER ---
@@ -61,22 +72,21 @@ const Home = () => {
     }
 
     await UserDataService.updateUser(userId, safeUpdates);
-    fetchUsers();
   };
 
   // --- DELETE LOGIC ---
   const handleDeleteRole = async (userId, roleToDelete) => {
     if(window.confirm(`Remove role "${roleToDelete.duty}"?`)) {
       await UserDataService.removeRoleFromUser(userId, roleToDelete);
-      fetchUsers();
     }
   };
 
   const deleteUser = async (id) => {
     if(window.confirm("Are you sure you want to delete this user?")) {
         await UserDataService.deleteUser(id);
-        fetchUsers();
     }
+
+
   };
 
   // --- FILTER LOGIC (Updated for Registry Number) ---
@@ -90,12 +100,23 @@ const Home = () => {
     const matchesReg = user.registry_number && user.registry_number.toLowerCase().includes(lowerSearch);
     
     return matchesName || matchesRole || matchesReg;
+
   });
 
   return (
     <div className="App">
-      <h1>Hanap</h1>
-
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <img 
+            src={hanapLogo} 
+            alt="Hanap Logo" 
+            style={{ width: '100px', height: '100px', objectFit: 'contain', borderRadius: '8px' }} 
+        />
+        <h1 style={{ margin: 0 }}>Hanap Member Management</h1>
+        <button onClick={handleLogout} className="btn-cancel" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+          Sign Out
+        </button>
+      </div>
+      
       <StatsCard users={users} />
 
       <div style={{ marginBottom: '20px', maxWidth: '400px', margin: '0 auto 30px auto' }}>
