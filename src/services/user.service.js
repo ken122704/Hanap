@@ -9,13 +9,21 @@ import {
   arrayUnion,
   arrayRemove // <--- NEW IMPORT
 } from "firebase/firestore";
+import { auth } from "../firebase/firebase-config";
 
 const userCollectionRef = collection(db, "users");
 
 class UserDataService {
   
   addUser = (newUser) => {
-    return addDoc(userCollectionRef, newUser);
+    const currentUserId = auth.currentUser.uid;
+
+    const userWithId = {
+    ...newUser,
+    userId: currentUserId
+    };
+
+    return addDoc(userCollectionRef, userWithId);
   };
 
   updateUser = (id, updatedUser) => {
