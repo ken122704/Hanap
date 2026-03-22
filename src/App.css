@@ -18,16 +18,12 @@
   --chip-text: #0369A1; 
 }
 
-/* --- THE FONT CONSISTENCY FIX --- */
-/* This forces every single element (including inputs and buttons) to inherit the body font */
 * {
   font-family: inherit;
 }
 
-/* --- GLOBAL RESETS --- */
 body {
   background-color: var(--bg);
-  /* This is now the master font for the entire app */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--text);
   margin: 0;
