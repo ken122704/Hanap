@@ -1,10 +1,10 @@
-# Hanap
+# Hanap 🔍
 
 ## 📌 Project Overview
 
-**Hanap** is a simple web-based masterlist and role management system built to organize, store, and manage records for a specific group. The name _Hanap_ comes from the Filipino word for **“look”** or **“search”**, reflecting the app’s goal of making information easy to find and manage.
+**Hanap** is a secure, cloud-based masterlist and role management system designed to organize and manage member records. The name comes from the Filipino word for **"to look"** or **"to search,"** reflecting the app’s core mission: making information accessible, organized, and secure.
 
-This project focuses on **core CRUD functionality** (Create, Read, Update, Delete) while keeping the system lightweight and beginner-friendly. It is built as a **learning-by-building project** rather than a tutorial-only exercise.
+This project has evolved from a basic CRUD application into a **fully secured full-stack web app**, implementing industry-standard security practices for Firebase and React.
 
 ---
 
@@ -12,72 +12,81 @@ This project focuses on **core CRUD functionality** (Create, Read, Update, Delet
 
 The main goals of Hanap are to:
 
-- Maintain a **centralized masterlist** of members
-- Organize members by **roles**
-- Store and manage related files in structured folders
-- Practice real-world full-stack development using modern tools
+- Maintain a **centralized, authenticated masterlist** of members.
+- Provide **Data Isolation**: Users only see and manage the records they created.
+- Implement **Backend Security**: Protecting sensitive data via server-side rules.
+- Practice **Professional DevOps**: Managing API secrets and automated deployments.
 
 ---
 
 ## ✨ Key Features
 
-- **Masterlist Management**
-  - Add, view, update, and delete member records
+- **Secure Authentication**
+  - Google Sign-In integration via Firebase Auth.
+- **Privacy-First Masterlist**
+  - Personal data isolation (User A cannot see User B's records).
 - **Role-Based Organization**
-  - Assign and group members by roles
-- **Date Tracking**
-  - Store important dates (e.g., swore date) using Firestore Timestamps
-- **Storage System**
-  - Folder-based structure such as:
-    - Per Head Total
-    - Per Role Total
-- **Simple & Clean UI**
-  - Focused on usability and clarity
+  - Categorize members by specific duties and roles.
+- **Real-time Data Tracking**
+  - Instant updates using Firestore, with precise date tracking using Timestamps.
+- **Automated Deployment**
+  - Fully integrated GitHub Actions pipeline for seamless updates.
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Frontend:** JavaScript React
+- **Frontend:** React.js (JavaScript)
 - **Backend (BaaS):** Firebase
-  - Firestore (Database)
-  - Firebase Storage
-  - Firebase Hosting or Vercel (Deployment)
+  - **Firestore:** No-SQL Database with custom **Security Rules**.
+  - **Authentication:** Google OAuth 2.0.
+  - **Hosting:** Firebase Hosting.
+- **DevOps/Security:**
+  - **GitHub Actions:** CI/CD for automated builds.
+  - **Dotenv (.env):** Local environment variable management.
+  - **GitHub Secrets:** Secure injection of API keys during build-time.
 
 ---
 
-## 🚀 Deployment
+## 🔐 Security Implementation
 
-Hanap can be deployed using **free tiers**:
+This project prioritizes data integrity through a multi-layered defense:
 
-- **Frontend:** Firebase Hosting or Vercel
-- **Backend:** Firebase Spark Plan
+1. **Firestore Security Rules:** Server-side logic that validates `request.auth.uid` against document `userId` fields, preventing unauthorized data access.
+2. **API Key Restrictions:** Google Cloud restrictions limiting API usage to specific authorized domains.
+3. **Secret Management:** Sensitive Firebase credentials are never hardcoded in the repository; they are managed via GitHub Secrets and injected during the build process.
 
-This allows the project to be live without any server or hosting costs.
+---
+
+## 🚀 Deployment & CI/CD
+
+Hanap uses a professional deployment workflow:
+
+1. Code is pushed to the `main` branch.
+2. **GitHub Actions** triggers a build, pulling API keys from **Encrypted Secrets**.
+3. The production-ready build is automatically deployed to **Firebase Hosting**.
 
 ---
 
 ## 🔮 Future Improvements
 
-- Authentication and access control
-- Search and filter functionality
-- Role-based summaries and totals
-- AI agent integration for automation and reporting
-- UI and UX improvements
+- [ ] **Advanced Search:** Implementing fuzzy search for large masterlists.
+- [ ] **Role-Based Access Control (RBAC):** Creating "Admin" roles for global data oversight.
+- [ ] **Analytics Dashboard:** Visualizing trends across different roles and statuses.
+- [ ] **AI Integration:** Using n8n or Gemini to automate member reporting and insights.
 
 ---
 
 ## 📚 Learning Focus
 
-This project is built to practice:
+This project serves as a practical application of:
 
-- CRUD operations
-- Firestore data modeling
-- Handling timestamps and real-world data
-- Building a small but complete system from scratch
+- **Cloud Security:** Moving beyond "Test Mode" to production rules.
+- **Asynchronous Logic:** Handling real-time database streams in React.
+- **DevOps Principles:** Managing environments (Local vs. Production) and secret masking.
 
 ---
 
 ## 📄 License
 
-This project is for learning and educational purposes.
+This project is for educational purposes as part of a 3rd-year Computer Science curriculum.
