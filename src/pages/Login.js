@@ -8,30 +8,23 @@ import {
 import hanapLogo from '../assets/logo.png';
 
 const Login = () => {
-  // State to toggle between Login and Register modes
   const [isRegistering, setIsRegistering] = useState(false);
-  
-  // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // Handle Email & Password Submission
   const handleEmailAuth = async (e) => {
-    e.preventDefault(); // Prevents page reload
-    setError(''); // Clear old errors
+    e.preventDefault();
+    setError('');
     
     try {
       if (isRegistering) {
-        // Register a new user
         await createUserWithEmailAndPassword(auth, email, password);
       } else {
-        // Log in an existing user
         await signInWithEmailAndPassword(auth, email, password);
       }
     } catch (err) {
       console.error("Auth error:", err);
-      // Clean up Firebase error messages to be user-friendly
       if (err.code === 'auth/email-already-in-use') setError('This email is already registered.');
       else if (err.code === 'auth/wrong-password') setError('Incorrect password.');
       else if (err.code === 'auth/user-not-found') setError('No account found with this email.');
@@ -40,7 +33,6 @@ const Login = () => {
     }
   };
 
-  // Handle Google Login
   const handleGoogleLogin = async () => {
     setError('');
     try {
@@ -52,55 +44,63 @@ const Login = () => {
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
+    <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--bg-body)' }}>
+      <div className="card" style={{ width: '100%', maxWidth: '400px', textAlign: 'center', padding: '2.5rem' }}>
 
         <img 
           src={hanapLogo} 
           alt="Hanap Logo" 
-          style={{ width: '200px', height: '200px', objectFit: 'contain', marginBottom: '0px', borderRadius: '12px' }} 
+          style={{ width: '140px', height: '140px', objectFit: 'contain', marginBottom: '1rem', borderRadius: 'var(--radius-md)' }} 
         />
         
-        <p style={{ color: '#64748B', marginBottom: '25px', fontSize: '0.9rem' }}>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem', fontWeight: 500 }}>
           {isRegistering ? 'Create a new account' : 'Sign in to your account'}
         </p>
 
-        {/* Show Errors if they exist */}
-        {error && <div style={styles.errorBox}>{error}</div>}
+        {/* Error Notification */}
+        {error && (
+          <div style={{ backgroundColor: '#fef2f2', color: 'var(--danger)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1.25rem', fontSize: '0.85rem', border: '1px solid #fecaca', fontWeight: 500 }}>
+            {error}
+          </div>
+        )}
 
         {/* Email & Password Form */}
-        <form onSubmit={handleEmailAuth} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <input 
-            type="email" 
-            placeholder="Email Address" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-          />
-          <input 
-            type="password" 
-            placeholder="Password (min 6 chars)" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={styles.input}
-          />
-          <button type="submit" style={styles.primaryButton}>
-            {isRegistering ? 'Register' : 'Sign In'}
+        <form onSubmit={handleEmailAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'left' }}>
+          <div className="input-group" style={{ marginBottom: 0 }}>
+            <label>Email Address</label>
+            <input 
+              type="email" 
+              placeholder="name@example.com" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group" style={{ marginBottom: 0 }}>
+            <label>Password</label>
+            <input 
+              type="password" 
+              placeholder="At least 6 characters" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem', padding: '0.75rem' }}>
+            {isRegistering ? 'Register Account' : 'Sign In'}
           </button>
         </form>
 
         {/* Divider */}
-        <div style={styles.dividerContainer}>
-          <div style={styles.line}></div>
-          <span style={styles.orText}>OR</span>
-          <div style={styles.line}></div>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }}></div>
+          <span style={{ margin: '0 1rem', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em' }}>OR</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }}></div>
         </div>
         
         {/* Google Button */}
-        <button onClick={handleGoogleLogin} style={styles.googleButton}>
-          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '8px' }}>
+        <button onClick={handleGoogleLogin} className="btn btn-cancel" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#ffffff', color: 'var(--text-main)', padding: '0.75rem' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -110,14 +110,14 @@ const Login = () => {
         </button>
 
         {/* Toggle Mode Text */}
-        <p style={{ marginTop: '25px', fontSize: '0.85rem', color: '#64748B' }}>
+        <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
           {isRegistering ? 'Already have an account?' : "Don't have an account?"}{' '}
           <span 
             onClick={() => {
               setIsRegistering(!isRegistering);
-              setError(''); // Clear errors when switching modes
+              setError('');
             }} 
-            style={styles.toggleLink}
+            style={{ color: 'var(--primary)', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}
           >
             {isRegistering ? 'Sign In' : 'Register'}
           </span>
@@ -125,20 +125,6 @@ const Login = () => {
       </div>
     </div>
   );
-};
-
-// Styles mapped to your Sky Blue theme
-const styles = {
-  page: { height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--bg)' },
-  card: { background: 'white', padding: '40px', borderRadius: '16px', textAlign: 'center', boxShadow: '0 10px 25px rgba(14, 165, 233, 0.15)', width: '100%', maxWidth: '380px' },
-  input: { width: '100%', padding: '12px', border: '1px solid #E2E8F0', borderRadius: '8px', fontSize: '0.95rem', boxSizing: 'border-box' },
-  primaryButton: { width: '100%', padding: '12px', backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer', transition: 'background 0.2s' },
-  googleButton: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', width: '100%', padding: '12px', backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', fontSize: '0.95rem', fontWeight: 'bold', color: '#334155', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' },
-  dividerContainer: { display: 'flex', alignItems: 'center', margin: '20px 0' },
-  line: { flex: 1, height: '1px', backgroundColor: '#E2E8F0' },
-  orText: { margin: '0 15px', color: '#94A3B8', fontSize: '0.85rem', fontWeight: 'bold' },
-  toggleLink: { color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' },
-  errorBox: { backgroundColor: '#FEE2E2', color: '#B91C1C', padding: '10px', borderRadius: '8px', marginBottom: '15px', fontSize: '0.85rem', border: '1px solid #FCA5A5' }
 };
 
 export default Login;

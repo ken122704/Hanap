@@ -1,4 +1,4 @@
-import { db } from "../firebase/firebase-config";
+import { db, auth } from "../firebase/firebase-config";
 import { 
   collection, 
   getDocs, 
@@ -7,22 +7,20 @@ import {
   deleteDoc, 
   doc,
   arrayUnion,
-  arrayRemove // <--- NEW IMPORT
+  arrayRemove 
 } from "firebase/firestore";
-import { auth } from "../firebase/firebase-config";
 
 const userCollectionRef = collection(db, "users");
 
 class UserDataService {
   
-  addUser = (newUser) => {
+  // Back to a simple addUser function!
+  addUser = async (newUser) => {
     const currentUserId = auth.currentUser.uid;
-
     const userWithId = {
-    ...newUser,
-    userId: currentUserId
+      ...newUser,
+      userId: currentUserId
     };
-
     return addDoc(userCollectionRef, userWithId);
   };
 

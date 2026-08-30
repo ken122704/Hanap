@@ -13,7 +13,6 @@ const Home = () => {
   const { users } = useUsers();
   const [searchTerm, setSearchTerm] = useState("");
  
-  // --- LOGOUT ---
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -22,20 +21,18 @@ const Home = () => {
     }
   };
 
-  // --- CREATE USER ---
-  const createUser = async (name, registryNumber, rolesArray, initialStatus) => {
+  // --- CREATE USER (Simplified for Base64) ---
+  const createUser = async (newUserData) => {
     if (!auth.currentUser) return alert("You must be logged in to add members!");
     
-    const formattedRoles = rolesArray.map(role => ({
+    const formattedRoles = newUserData.roles ? newUserData.roles.map(role => ({
         duty: role.duty,
         swore_date: role.swore_date ? Timestamp.fromDate(new Date(role.swore_date)) : null
-    }));
+    })) : [];
 
     const newUser = { 
-      name: name,
-      registry_number: registryNumber,
+      ...newUserData,
       roles: formattedRoles,
-      status: initialStatus || "Active",
       owner_uid: auth.currentUser.uid
     };
     
@@ -47,7 +44,6 @@ const Home = () => {
     await UserDataService.updateUser(id, { status: newStatus });
   };
 
-  // --- ADD ROLE ---
   const handleAddRole = async (userId, duty, date) => {
     const targetUser = users.find(u => u.id === userId);
     if (targetUser?.roles?.some(r => r.duty === duty)) {
@@ -57,11 +53,9 @@ const Home = () => {
     await UserDataService.addRoleToUser(userId, newRole);
   };
 
-  // --- EDIT USER ---
   const handleEditUser = async (userId, updatedFields) => {
     const safeUpdates = { ...updatedFields };
 
-    // Ensure dates in roles are timestamps
     if (safeUpdates.roles) {
         safeUpdates.roles = safeUpdates.roles.map(role => ({
             ...role,
@@ -70,11 +64,9 @@ const Home = () => {
                 : role.swore_date
         }));
     }
-
     await UserDataService.updateUser(userId, safeUpdates);
   };
 
-  // --- DELETE LOGIC ---
   const handleDeleteRole = async (userId, roleToDelete) => {
     if(window.confirm(`Remove role "${roleToDelete.duty}"?`)) {
       await UserDataService.removeRoleFromUser(userId, roleToDelete);
@@ -85,22 +77,20 @@ const Home = () => {
     if(window.confirm("Are you sure you want to delete this user?")) {
         await UserDataService.deleteUser(id);
     }
-
-
   };
 
-  // --- FILTER LOGIC (Updated for Registry Number) ---
   const filteredUsers = users.filter((user) => {
     const lowerSearch = searchTerm.toLowerCase();
     
-    const matchesName = user.name.toLowerCase().includes(lowerSearch);
-    
+    const matchesName = user.name?.toLowerCase().includes(lowerSearch);
+    const matchesReg = user.registry_number?.toLowerCase().includes(lowerSearch);
+    const matchesControl = user.controlNumber?.toLowerCase().includes(lowerSearch);
+    const matchesPrk = user.prkGrp?.toLowerCase().includes(lowerSearch);
+    const matchesHanapbuhay = user.hanapbuhay?.toLowerCase().includes(lowerSearch);
+    const matchesEdukasyon = user.edukasyon?.toLowerCase().includes(lowerSearch);
     const matchesRole = user.roles && user.roles.some(r => r.duty.toLowerCase().includes(lowerSearch));
     
-    const matchesReg = user.registry_number && user.registry_number.toLowerCase().includes(lowerSearch);
-    
-    return matchesName || matchesRole || matchesReg;
-
+    return matchesName || matchesRole || matchesReg || matchesControl || matchesPrk || matchesHanapbuhay || matchesEdukasyon;
   });
 
   return (
@@ -127,7 +117,6 @@ const Home = () => {
         />
       </div>
       
-      {/* Form passes data to createUser */}
       <UserForm onCreate={createUser} />
 
       <div className="user-grid">
